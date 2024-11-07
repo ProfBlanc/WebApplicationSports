@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -46,6 +47,7 @@ namespace WebApplicationSports.Controllers
         }
 
         // GET: Seats/Create
+        [Authorize]
         public IActionResult Create()
         {
             ViewData["GameId"] = new SelectList(_context.Games, "GameId", "GameId");
@@ -57,6 +59,7 @@ namespace WebApplicationSports.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("SeatId,GameId,SeatRow,SeatNumber,Price")] Seat seat)
         {
             if (ModelState.IsValid)
@@ -70,6 +73,7 @@ namespace WebApplicationSports.Controllers
         }
 
         // GET: Seats/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -91,6 +95,7 @@ namespace WebApplicationSports.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(int id, [Bind("SeatId,GameId,SeatRow,SeatNumber,Price")] Seat seat)
         {
             if (id != seat.SeatId)
@@ -123,6 +128,7 @@ namespace WebApplicationSports.Controllers
         }
 
         // GET: Seats/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -144,6 +150,7 @@ namespace WebApplicationSports.Controllers
         // POST: Seats/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var seat = await _context.Seats.FindAsync(id);

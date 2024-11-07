@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Configuration;
 using WebApplicationSports.Data;
 
 namespace WebApplicationSports
@@ -20,7 +21,12 @@ namespace WebApplicationSports
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
-
+            builder.Services.AddAuthentication().AddGoogle(
+                options => {
+ IConfigurationSection googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
+                    }
+                );
+            
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

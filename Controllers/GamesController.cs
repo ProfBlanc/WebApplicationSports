@@ -43,7 +43,7 @@ namespace WebApplicationSports.Controllers
 
             return View(game);
         }
-        [Authorize]
+        [Authorize(Roles = "Administrator")]
         // GET: Games/Create
         public IActionResult Create()
         {
@@ -53,7 +53,7 @@ namespace WebApplicationSports.Controllers
         // POST: Games/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize]
+        [Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("GameId,DateOfMatch,TeamHome,HomeScore,TeamAway,AwayScore")] Game game)
