@@ -1,15 +1,21 @@
 ﻿@model IEnumerable<WebApplicationSports.Models.Player>
 
-@{
-    ViewData["Title"] = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
+
+
+@if (!TempData.ContainsKey("partialDisplay"))
+    {
+        
+        ViewData["Title"] = "Index";
+        Layout = "~/Views/Shared/_Layout.cshtml";
+
 
 <h1>Index</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+}
+
 <table class="table">
     <thead>
         <tr>
@@ -19,10 +25,14 @@
             <th>
                 @Html.DisplayNameFor(model => model.PlayerNumber)
             </th>
+@if (!TempData.ContainsKey("partialDisplay"))
+    {
+
             <th>
                 @Html.DisplayNameFor(model => model.Team)
             </th>
-            <th></th>
+                <th></th>
+            }
         </tr>
     </thead>
     <tbody>
@@ -34,6 +44,9 @@
             <td>
                 @Html.DisplayFor(modelItem => item.PlayerNumber)
             </td>
+                @if (!TempData.ContainsKey("partialDisplay"))
+                {
+
             <td>
                 @Html.DisplayFor(modelItem => item.Team.City)
             </td>
@@ -42,7 +55,8 @@
                 <a asp-action="Details" asp-route-id="@item.PlayerId">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.PlayerId">Delete</a>
             </td>
-        </tr>
+                }
+                </tr>
 }
     </tbody>
 </table>

@@ -36,10 +36,16 @@ namespace WebApplicationSports.Controllers
 
             var team = await _context.Teams
                 .FirstOrDefaultAsync(m => m.TeamId == id);
+
             if (team == null)
             {
                 return NotFound();
             }
+
+            var players = await _context.Players.Where(p => p.TeamId == team.TeamId).ToListAsync();
+
+            ViewBag.Players = players;
+            TempData["partialDisplay"] = true;
 
             return View(team);
         }
@@ -57,10 +63,28 @@ namespace WebApplicationSports.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Create([Bind("TeamId,TeamName,City,Region,Country,Logo,MascotName")] Team team)
+        public async Task<IActionResult> Create([Bind("TeamId,TeamName,City,Region,Country,Logo,LogoUpload,MascotName")] Team team)
         {
             if (ModelState.IsValid)
             {
+                if (team.LogoUpload == null)
+                {
+                    team.Logo = "no-logo.png";
+                }
+                else {
+
+                    string fileName = Path.GetFileName(team.LogoUpload.FileName);
+                    string ext = Path.GetExtension(team.LogoUpload.FileName);
+                    //string uniqueFileName = Guid.NewGuid().ToString();
+
+
+                    team.LogoUpload.CopyTo(new FileStream(@"wwwroot\images\team\" + 
+                        fileName + ext
+                        , FileMode.CreateNew));
+
+                    team.Logo = fileName + ext;
+                    
+                }
                 _context.Add(team);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

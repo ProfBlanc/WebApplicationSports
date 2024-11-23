@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,22 +10,23 @@ using WebApplicationSports.Models;
 
 namespace WebApplicationSports.Controllers
 {
-    public class GamesController : Controller
+    public class CartsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public GamesController(ApplicationDbContext context)
+        public CartsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Games
+        // GET: Carts
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Games.ToListAsync());
+            var applicationDbContext = _context.Carts.Include(c => c.Purchase);
+            return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Games/Details/5
+        // GET: Carts/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,41 +34,42 @@ namespace WebApplicationSports.Controllers
                 return NotFound();
             }
 
-            var game = await _context.Games
-                .FirstOrDefaultAsync(m => m.GameId == id);
-            if (game == null)
+            var carts = await _context.Carts
+                .Include(c => c.Purchase)
+                .FirstOrDefaultAsync(m => m.CartID == id);
+            if (carts == null)
             {
                 return NotFound();
             }
 
-            return View(game);
+            return View(carts);
         }
-        [Authorize(Roles = "Administrator")]
-        // GET: Games/Create
+
+        // GET: Carts/Create
         public IActionResult Create()
         {
+            ViewData["PurchaseID"] = new SelectList(_context.Purchases, "PurchaseId", "PaymentMethod");
             return View();
         }
 
-        // POST: Games/Create
+        // POST: Carts/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = "Administrator")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("GameId,DateOfMatch,TeamHome,HomeScore,TeamAway,AwayScore")] Game game)
+        public async Task<IActionResult> Create([Bind("CartID,PurchaseID,Quantity,DateCreated")] Carts carts)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(game);
+                _context.Add(carts);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(game);
+            ViewData["PurchaseID"] = new SelectList(_context.Purchases, "PurchaseId", "PaymentMethod", carts.PurchaseID);
+            return View(carts);
         }
 
-        // GET: Games/Edit/5
-        [Authorize(Roles = "Administrator")]
+        // GET: Carts/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -76,23 +77,23 @@ namespace WebApplicationSports.Controllers
                 return NotFound();
             }
 
-            var game = await _context.Games.FindAsync(id);
-            if (game == null)
+            var carts = await _context.Carts.FindAsync(id);
+            if (carts == null)
             {
                 return NotFound();
             }
-            return View(game);
+            ViewData["PurchaseID"] = new SelectList(_context.Purchases, "PurchaseId", "PaymentMethod", carts.PurchaseID);
+            return View(carts);
         }
 
-        // POST: Games/Edit/5
+        // POST: Carts/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> Edit(int id, [Bind("GameId,DateOfMatch,TeamHome,HomeScore,TeamAway,AwayScore")] Game game)
+        public async Task<IActionResult> Edit(int id, [Bind("CartID,PurchaseID,Quantity,DateCreated")] Carts carts)
         {
-            if (id != game.GameId)
+            if (id != carts.CartID)
             {
                 return NotFound();
             }
@@ -101,12 +102,12 @@ namespace WebApplicationSports.Controllers
             {
                 try
                 {
-                    _context.Update(game);
+                    _context.Update(carts);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!GameExists(game.GameId))
+                    if (!CartsExists(carts.CartID))
                     {
                         return NotFound();
                     }
@@ -117,11 +118,11 @@ namespace WebApplicationSports.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(game);
+            ViewData["PurchaseID"] = new SelectList(_context.Purchases, "PurchaseId", "PaymentMethod", carts.PurchaseID);
+            return View(carts);
         }
 
-        // GET: Games/Delete/5
-        [Authorize(Roles = "Administrator")]
+        // GET: Carts/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -129,35 +130,35 @@ namespace WebApplicationSports.Controllers
                 return NotFound();
             }
 
-            var game = await _context.Games
-                .FirstOrDefaultAsync(m => m.GameId == id);
-            if (game == null)
+            var carts = await _context.Carts
+                .Include(c => c.Purchase)
+                .FirstOrDefaultAsync(m => m.CartID == id);
+            if (carts == null)
             {
                 return NotFound();
             }
 
-            return View(game);
+            return View(carts);
         }
 
-        // POST: Games/Delete/5
+        // POST: Carts/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var game = await _context.Games.FindAsync(id);
-            if (game != null)
+            var carts = await _context.Carts.FindAsync(id);
+            if (carts != null)
             {
-                _context.Games.Remove(game);
+                _context.Carts.Remove(carts);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool GameExists(int id)
+        private bool CartsExists(int id)
         {
-            return _context.Games.Any(e => e.GameId == id);
+            return _context.Carts.Any(e => e.CartID == id);
         }
     }
 }

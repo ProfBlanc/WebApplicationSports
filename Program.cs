@@ -16,17 +16,18 @@ namespace WebApplicationSports
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
+            
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
+            /*
             builder.Services.AddAuthentication().AddGoogle(
                 options => {
  IConfigurationSection googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
                     }
                 );
-            
+      */      
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

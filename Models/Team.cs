@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
 
 namespace WebApplicationSports.Models
 {
@@ -15,6 +18,11 @@ namespace WebApplicationSports.Models
         [Required]
         public string Country { get; set; }
         [Required]
+
+        [NotMapped]
+        public IFormFile LogoUpload { get; set; }
+
+        [ValidateNever]
         public string Logo { get; set; }
         [Required]
         public string MascotName { get; set; }

@@ -39,7 +39,8 @@
             @Html.DisplayNameFor(model => model.Logo)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Logo)
+            <img src="~/images/team/@Model.Logo" alt="@Model.TeamName" title="@Model.TeamName" height="300"/>
+
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.MascotName)
@@ -48,6 +49,10 @@
             @Html.DisplayFor(model => model.MascotName)
         </dd>
     </dl>
+
+    <hr/>
+    <partial name="~/Views/Players/Index.cshtml" model="@ViewBag.Players" />
+
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.TeamId">Edit</a> |

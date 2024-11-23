@@ -21,5 +21,8 @@ namespace WebApplicationSports.Data
             : base(options)
         {
         }
+        public DbSet<WebApplicationSports.Models.Order> Order { get; set; } = default!;
+        public DbSet<WebApplicationSports.Models.Carts> Carts { get; set; } = default!;
+        public DbSet<WebApplicationSports.Models.OrderDetails> OrderDetails { get; set; } = default!;
     }
 }
